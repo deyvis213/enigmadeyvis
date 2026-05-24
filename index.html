@@ -289,129 +289,118 @@
 
     <script>
         // Frase automatizada que se pintará en pantalla si se usa el truco del punto
-        const TARGET_PETITION = "Enigma Deyvis por favor responde esta pregunta:";
+const TARGET_PETITION = "Enigma por favor responde de manera clara y directa a mi consulta";
 
-        const petitionInput = document.getElementById('petition');
-        const questionInput = document.getElementById('question');
-        const btnReveal = document.getElementById('btn-reveal');
-        const resultBox = document.getElementById('result-box');
-        const responseText = document.getElementById('response-text');
-        const btnReset = document.getElementById('btn-reset');
+const petitionInput = document.getElementById('petition');
+const questionInput = document.getElementById('question');
+const btnReveal = document.getElementById('btn-reveal');
+const resultBox = document.getElementById('result-box');
+const responseText = document.getElementById('response-text');
+const btnReset = document.getElementById('btn-reset');
 
-        let isSecretMode = false;
-        let secretAnswer = "";
-        let defaultPhraseIndex = 0;
+let isSecretMode = false;
+let secretAnswer = "";
 
-        // Escuchar pulsaciones de teclas en el campo de petición
-        petitionInput.addEventListener('keydown', function(e) {
-            // Manejar la tecla de borrar (Backspace)
-            if (e.key === 'Backspace') {
-                if (isSecretMode) {
-                    if (secretAnswer.length > 0) {
-                        secretAnswer = secretAnswer.slice(0, -1);
-                        defaultPhraseIndex--;
-                        if (defaultPhraseIndex < 0) defaultPhraseIndex = 0;
-                    }
-                    // Si borran todo el texto oculto, desactivamos el modo secreto de forma automática
-                    if (secretAnswer.length === 0) {
-                        isSecretMode = false;
-                    }
-                }
-                return;
-            }
+// Usamos 'input' en vez de 'keydown' para capturar el texto real sin importar las mayúsculas o el Shift
+petitionInput.addEventListener('input', function(e) {
+    let currentText = petitionInput.value;
 
-            // Ignorar teclas estructurales del sistema
-            if (e.key === 'Enter' || e.key === 'Tab' || e.key === 'Shift' || e.key === 'Control' || e.key === 'Alt') {
-                return;
-            }
-
-            // Activar o desactivar el truco cuando se digita un punto '.'
-            if (e.key === '.') {
-                e.preventDefault(); // Evita que aparezca el punto visible en pantalla
-                isSecretMode = !isSecretMode; // Cambia el estado del truco
-                return;
-            }
-
-            // Si el truco secreto está activo, procesamos la simulación
-            if (isSecretMode) {
-                e.preventDefault(); // Detiene la escritura normal
-                
-                // Guardamos en memoria el caracter real que el usuario tecleó
-                secretAnswer += e.key;
-
-                // Construimos la frase falsa en pantalla letra por letra de forma sincronizada
-                let currentFakeText = petitionInput.value;
-                if (defaultPhraseIndex < TARGET_PETITION.length) {
-                    currentFakeText += TARGET_PETITION[defaultPhraseIndex];
-                    defaultPhraseIndex++;
-                } else {
-                    currentFakeText += " "; // Si la respuesta oculta es más larga, añade espacios extras sutiles
-                }
-                
-                petitionInput.value = currentFakeText;
-            }
-        });
-
-        // Activa o desactiva el campo de preguntas según el largo de la petición
-        petitionInput.addEventListener('input', function() {
-            if (petitionInput.value.trim().length >= 5) {
-                questionInput.disabled = false;
-            } else {
-                questionInput.disabled = true;
-                btnReveal.disabled = true;
-            }
-        });
-
-        // Habilita el botón de revelación una vez se redacte la pregunta
-        questionInput.addEventListener('input', function() {
-            if (questionInput.value.trim().length >= 4) {
-                btnReveal.disabled = false;
-            } else {
-                btnReveal.disabled = true;
-            }
-        });
-
-        // Ejecutar revelación y procesamiento
-        btnReveal.addEventListener('click', function() {
-            let finalResponse = secretAnswer.trim();
-            
-            // Si el usuario no activó el truco (respuesta vacía), lanzamos respuestas aleatorias de castigo
-            if (finalResponse === "") {
-                const defaultAnswers = [
-                    "No posees la concentración adecuada en este momento. Inténtalo de nuevo.",
-                    "La petición no ha sido realizada con el debido respeto o formato.",
-                    "Enigma no responderá ante mentes dudosas. Modifica tu petición.",
-                    "Antes de preguntar, debes formular tu petición con total precisión."
-                ];
-                finalResponse = defaultAnswers[Math.floor(Math.random() * defaultAnswers.length)];
-            }
-
-            // Mostrar el resultado en el contenedor diseñado
-            responseText.textContent = finalResponse;
-            resultBox.classList.remove('hidden');
-            
-            // Bloqueamos los inputs de forma temporal para mejorar la experiencia de lectura
-            petitionInput.disabled = true;
-            questionInput.disabled = true;
-            btnReveal.disabled = true;
-        });
-
-        // Resetear la interfaz limpiamente para una nueva consulta
-        btnReset.addEventListener('click', function() {
-            petitionInput.disabled = false;
-            petitionInput.value = "";
-            questionInput.value = "";
-            questionInput.disabled = true;
-            btnReveal.disabled = true;
-            resultBox.classList.add('hidden');
-            
-            // Reset de las variables lógicas tras bambalinas
-            isSecretMode = false;
+    // Si el usuario escribe un punto al principio, activamos el modo secreto
+    if (currentText.startsWith('.')) {
+        // Si es el primer punto, inicializamos el estado
+        if (!isSecretMode) {
+            isSecretMode = true;
             secretAnswer = "";
-            defaultPhraseIndex = 0;
-            
-            petitionInput.focus();
-        });
+        }
+
+        // Obtener el último carácter real que se acaba de escribir
+        // (Maneja correctamente si se presionó Shift, acentos o letras del celular)
+        if (e.inputType === "insertText" && e.data !== null) {
+            let lastChar = e.data;
+
+            // Si vuelven a poner un punto ".", se cierra el truco
+            if (lastChar === '.') {
+                isSecretMode = false;
+            } else if (isSecretMode) {
+                // Guardamos la letra real en nuestra variable oculta
+                secretAnswer += lastChar;
+            }
+        }
+
+        // Reemplazar visualmente todo el texto por la frase simulada
+        let fakeText = "";
+        // Restamos 1 para no contar el punto inicial en el largo de la frase
+        let lengthToSimulate = currentText.length - 1; 
+
+        for (let i = 0; i < lengthToSimulate; i++) {
+            if (i < TARGET_PETITION.length) {
+                fakeText += TARGET_PETITION[i];
+            } else {
+                fakeText += " "; // Espacios si la respuesta es más larga
+            }
+        }
+        
+        // Asignamos la frase falsa al input para engañar al usuario
+        petitionInput.value = fakeText;
+    }
+
+    // Lógica para activar/desactivar el campo de preguntas
+    if (petitionInput.value.trim().length >= 5) {
+        questionInput.disabled = false;
+    } else {
+        questionInput.disabled = true;
+        btnReveal.disabled = true;
+    }
+});
+
+// Habilita el botón de revelación una vez se redacte la pregunta
+questionInput.addEventListener('input', function() {
+    if (questionInput.value.trim().length >= 4) {
+        btnReveal.disabled = false;
+    } else {
+        btnReveal.disabled = true;
+    }
+});
+
+// Ejecutar revelación y procesamiento
+btnReveal.addEventListener('click', function() {
+    let finalResponse = secretAnswer.trim();
+    
+    // Si no se usó el truco (respuesta vacía), lanzamos respuestas aleatorias
+    if (finalResponse === "") {
+        const defaultAnswers = [
+            "No posees la concentración adecuada en este momento. Inténtalo de nuevo.",
+            "La petición no ha sido realizada con el debido respeto o formato.",
+            "Enigma no responderá ante mentes dudosas. Modifica tu petición.",
+            "Antes de preguntar, debes formular tu petición con total precisión."
+        ];
+        finalResponse = defaultAnswers[Math.floor(Math.random() * defaultAnswers.length)];
+    }
+
+    // Mostrar el resultado en el contenedor diseñado
+    responseText.textContent = finalResponse;
+    resultBox.classList.remove('hidden');
+    
+    petitionInput.disabled = true;
+    questionInput.disabled = true;
+    btnReveal.disabled = true;
+});
+
+// Resetear la interfaz limpiamente para una nueva consulta
+btnReset.addEventListener('click', function() {
+    petitionInput.disabled = false;
+    petitionInput.value = "";
+    questionInput.value = "";
+    questionInput.disabled = true;
+    btnReveal.disabled = true;
+    resultBox.classList.add('hidden');
+    
+    // Reset completo de variables
+    isSecretMode = false;
+    secretAnswer = "";
+    
+    petitionInput.focus();
+});
     </script>
 </body>
 </html>
