@@ -1,0 +1,419 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enigma Deyvis Ramírez</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Variables de Diseño Moderno y Premium */
+        :root {
+            --bg-color: #0d0f12;
+            --card-bg: #161a20;
+            --border-color: #242b35;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --accent: #d4af37; /* Dorado sutil y elegante */
+            --accent-glow: rgba(212, 175, 55, 0.15);
+            --input-focus: #1e2530;
+            --font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-family);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Decoración geométrica delicada de fondo */
+        .background-decor {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--accent-glow) 0%, rgba(13,15,18,0) 70%);
+            top: -10%;
+            right: -10%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            padding: 24px;
+            z-index: 1;
+        }
+
+        /* Encabezado */
+        header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        header h1 {
+            font-weight: 700;
+            font-size: 2.5rem;
+            letter-spacing: 6px;
+            color: var(--text-main);
+            background: linear-gradient(180deg, #ffffff 0%, #a3a3a3 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        header .subtitle {
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            color: var(--accent);
+            text-transform: uppercase;
+            margin-top: 6px;
+            font-weight: 500;
+        }
+
+        .divider {
+            width: 40px;
+            height: 2px;
+            background-color: var(--accent);
+            margin: 16px auto 0 auto;
+            opacity: 0.7;
+        }
+
+        /* Tarjeta Principal */
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .input-group {
+            margin-bottom: 24px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .input-group input {
+            width: 100%;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 14px 16px;
+            color: var(--text-main);
+            font-family: var(--font-family);
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background-color: var(--input-focus);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.1);
+        }
+
+        .input-group input:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .help-text {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 6px;
+            font-style: italic;
+        }
+
+        /* Botones */
+        button {
+            width: 100%;
+            background: linear-gradient(135deg, #d4af37 0%, #aa841b 100%);
+            border: none;
+            border-radius: 8px;
+            padding: 14px;
+            color: #0d0f12;
+            font-family: var(--font-family);
+            font-size: 0.95rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.2);
+        }
+
+        button:disabled {
+            background: var(--border-color);
+            color: var(--text-muted);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Cuadro de Respuesta */
+        .result-box {
+            margin-top: 24px;
+            background-color: #1a1510;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .result-box h3 {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent);
+            margin-bottom: 12px;
+        }
+
+        #response-text {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            color: var(--text-main);
+            font-weight: 300;
+        }
+
+        #btn-reset {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 10px;
+            font-size: 0.85rem;
+        }
+
+        #btn-reset:hover {
+            border-color: var(--text-muted);
+            color: var(--text-main);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Footer con cita */
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            opacity: 0.5;
+        }
+
+        footer p {
+            font-size: 0.75rem;
+            font-style: italic;
+            line-height: 1.4;
+            margin-bottom: 4px;
+        }
+
+        footer span {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="background-decor"></div>
+
+    <div class="container">
+        <header>
+            <h1>ENIGMA</h1>
+            <p class="subtitle">Deyvis Ramírez • Oráculo Digital</p>
+            <div class="divider"></div>
+        </header>
+
+        <main>
+            <div class="card">
+                <div class="input-group">
+                    <label for="petition">Petición a Enigma</label>
+                    <input type="text" id="petition" placeholder="Escribe tu petición con respeto..." autocomplete="off">
+                    <small class="help-text">Presiona "." al inicio para abrir el canal secreto.</small>
+                </div>
+
+                <div class="input-group">
+                    <label for="question">Tu Pregunta</label>
+                    <input type="text" id="question" placeholder="¿Qué deseas revelar?" autocomplete="off" disabled>
+                </div>
+
+                <button id="btn-reveal" disabled>Revelar Enigma</button>
+            </div>
+
+            <div id="result-box" class="result-box hidden">
+                <h3>Enigma responde:</h3>
+                <p id="response-text"></p>
+                <button id="btn-reset">Hacer nueva consulta</button>
+            </div>
+        </main>
+
+        <footer>
+            <p>"El destino es el que baraja las cartas, pero somos nosotros quienes las jugamos."</p>
+            <span>— William Shakespeare</span>
+        </footer>
+    </div>
+
+    <script>
+        // Frase automatizada que se pintará en pantalla si se usa el truco del punto
+        const TARGET_PETITION = "Enigma Deyvis por favor responde esta pregunta:";
+
+        const petitionInput = document.getElementById('petition');
+        const questionInput = document.getElementById('question');
+        const btnReveal = document.getElementById('btn-reveal');
+        const resultBox = document.getElementById('result-box');
+        const responseText = document.getElementById('response-text');
+        const btnReset = document.getElementById('btn-reset');
+
+        let isSecretMode = false;
+        let secretAnswer = "";
+        let defaultPhraseIndex = 0;
+
+        // Escuchar pulsaciones de teclas en el campo de petición
+        petitionInput.addEventListener('keydown', function(e) {
+            // Manejar la tecla de borrar (Backspace)
+            if (e.key === 'Backspace') {
+                if (isSecretMode) {
+                    if (secretAnswer.length > 0) {
+                        secretAnswer = secretAnswer.slice(0, -1);
+                        defaultPhraseIndex--;
+                        if (defaultPhraseIndex < 0) defaultPhraseIndex = 0;
+                    }
+                    // Si borran todo el texto oculto, desactivamos el modo secreto de forma automática
+                    if (secretAnswer.length === 0) {
+                        isSecretMode = false;
+                    }
+                }
+                return;
+            }
+
+            // Ignorar teclas estructurales del sistema
+            if (e.key === 'Enter' || e.key === 'Tab' || e.key === 'Shift' || e.key === 'Control' || e.key === 'Alt') {
+                return;
+            }
+
+            // Activar o desactivar el truco cuando se digita un punto '.'
+            if (e.key === '.') {
+                e.preventDefault(); // Evita que aparezca el punto visible en pantalla
+                isSecretMode = !isSecretMode; // Cambia el estado del truco
+                return;
+            }
+
+            // Si el truco secreto está activo, procesamos la simulación
+            if (isSecretMode) {
+                e.preventDefault(); // Detiene la escritura normal
+                
+                // Guardamos en memoria el caracter real que el usuario tecleó
+                secretAnswer += e.key;
+
+                // Construimos la frase falsa en pantalla letra por letra de forma sincronizada
+                let currentFakeText = petitionInput.value;
+                if (defaultPhraseIndex < TARGET_PETITION.length) {
+                    currentFakeText += TARGET_PETITION[defaultPhraseIndex];
+                    defaultPhraseIndex++;
+                } else {
+                    currentFakeText += " "; // Si la respuesta oculta es más larga, añade espacios extras sutiles
+                }
+                
+                petitionInput.value = currentFakeText;
+            }
+        });
+
+        // Activa o desactiva el campo de preguntas según el largo de la petición
+        petitionInput.addEventListener('input', function() {
+            if (petitionInput.value.trim().length >= 5) {
+                questionInput.disabled = false;
+            } else {
+                questionInput.disabled = true;
+                btnReveal.disabled = true;
+            }
+        });
+
+        // Habilita el botón de revelación una vez se redacte la pregunta
+        questionInput.addEventListener('input', function() {
+            if (questionInput.value.trim().length >= 4) {
+                btnReveal.disabled = false;
+            } else {
+                btnReveal.disabled = true;
+            }
+        });
+
+        // Ejecutar revelación y procesamiento
+        btnReveal.addEventListener('click', function() {
+            let finalResponse = secretAnswer.trim();
+            
+            // Si el usuario no activó el truco (respuesta vacía), lanzamos respuestas aleatorias de castigo
+            if (finalResponse === "") {
+                const defaultAnswers = [
+                    "No posees la concentración adecuada en este momento. Inténtalo de nuevo.",
+                    "La petición no ha sido realizada con el debido respeto o formato.",
+                    "Enigma no responderá ante mentes dudosas. Modifica tu petición.",
+                    "Antes de preguntar, debes formular tu petición con total precisión."
+                ];
+                finalResponse = defaultAnswers[Math.floor(Math.random() * defaultAnswers.length)];
+            }
+
+            // Mostrar el resultado en el contenedor diseñado
+            responseText.textContent = finalResponse;
+            resultBox.classList.remove('hidden');
+            
+            // Bloqueamos los inputs de forma temporal para mejorar la experiencia de lectura
+            petitionInput.disabled = true;
+            questionInput.disabled = true;
+            btnReveal.disabled = true;
+        });
+
+        // Resetear la interfaz limpiamente para una nueva consulta
+        btnReset.addEventListener('click', function() {
+            petitionInput.disabled = false;
+            petitionInput.value = "";
+            questionInput.value = "";
+            questionInput.disabled = true;
+            btnReveal.disabled = true;
+            resultBox.classList.add('hidden');
+            
+            // Reset de las variables lógicas tras bambalinas
+            isSecretMode = false;
+            secretAnswer = "";
+            defaultPhraseIndex = 0;
+            
+            petitionInput.focus();
+        });
+    </script>
+</body>
+</html>
+
+```
